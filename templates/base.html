@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.52.0/mapbox-gl.js"></script>
+    <link
+      href="//cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.52.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script
+      type="text/javascript"
+      src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+    ></script>
+
+    <script
+      src="https://kit.fontawesome.com/e24507d923.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/all.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+
+    <title>EWS | {% block title %} {% endblock %}</title>
+  </head>
+
+  <body>
+    <header>
+      <img src="/static/images/LOGO.jpg" alt="EWS Logo" class="logo" />
+
+      <nav>
+        <a href="/">Home</a>
+        <a href="/dashboard">EWS Dashboard</a>
+        <!-- <a href="#">Visualizations</a> -->
+        <a href="/downloads">Datasets</a>
+        <!-- <a href="/more">Datasets</a -->
+
+        <a href="/Frequent Questions">FAQS</a>
+        <a href="/contact">contact</a>
+      </nav>
+    </header>
+
+    <body>
+      {% block body %} {% endblock %}
+
+      <footer
+        class="container-fluid text-center p-2 mt-5"
+        style="background-color: rgb(23, 148, 100); color: white"
+      >
+        <a href="https://github.com/ClementNdome" style="color: white">EWS </a>
+        |2024 <span> <i class="fa-sharp fa-regular fa-copyright"></i></span> All
+        rights reserved
+      </footer>
+      <script src="{{ url_for( 'static', filename='js/owl.carousel.min.js') }}"></script>
+      <script src="{{ url_for( 'static', filename='js/all.min.js') }}"></script>
+      <script src="{{ url_for( 'static', filename='js/jquery.js') }}"></script>
+    </body>
+  </body>
+</html>

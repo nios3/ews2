@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %} home {% endblock %}
+
+{% block body %}
+<section class="home-section">
+    <aside class="info-section">
+        <h2>About the Early Warning System</h2>
+        <p>This EWS helps farmers and CFAs by providing critical information on soil moisture, crop yield, and weather conditions. The system integrates real-time data and machine learning predictions to issue timely alerts.</p>
+    </aside>
+    <div class="map-container">
+        <h2>Zones Under Study</h2>
+        <div id="map"></div>
+    </div>
+</section>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script> -->
+<script>
+    // Initialize the map
+    const map = L.map('map').setView([0.3476, 37.5823], 7); // Default center and zoom
+
+    // Basemap layers
+    const openStreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    });
+
+    const satellite = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution: "Tiles &copy; Esri &mdash; Source: Esri, USGS, NOAA",
+        }
+      );
+
+      const topo = L.tileLayer(
+        "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+        {
+          attribution:
+            'Map data: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> contributors',
+        }
+      );
+
+    // Add OpenStreetMap as the default basemap
+    satellite.addTo(map);
+
+    // Layer control for switching basemaps
+    const baseMaps = {
+      
+        "Satellite ": satellite,
+        "OpenStreetMap": openStreetMap,
+        "Topo": topo,
+    };
+
+    L.control.layers(baseMaps).addTo(map);
+
+      // Add a custom legend
+      const legend = L.control({ position: 'bottomright' });
+
+      legend.onAdd = function (map) {
+          const div = L.DomUtil.create('div', 'info legend');
+          // Define the legend content (adjust for your data)
+          div.innerHTML = `
+              <h4>Legend</h4>
+              <i style="background: #FF5733"></i> High Soil Moisture <br>
+              <i style="background: #33FF57"></i> Moderate Soil Moisture <br>
+              <i style="background: #337BFF"></i> Low Soil Moisture <br>
+          `;
+          return div;
+      };
+  
+      legend.addTo(map);
+
+     // Load GeoJSON data and add to map
+     fetch('/static/POLYS.geojson')
+    .then(response => response.json())
+    .then(data => {
+        const geojsonLayer = L.geoJSON(data).addTo(map);
+        map.fitBounds(geojsonLayer.getBounds()); // Adjust map view to fit the GeoJSON layer
+    })
+    .catch(error => console.error('Error loading GeoJSON:', error));
+
+</script>
+{% endblock %}

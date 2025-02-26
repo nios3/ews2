@@ -1,0 +1,190 @@
+/* General Reset */
+body, h1, h2, h3, p, ul, li, a {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(114, 177, 135); /* Replace with your preferred theme color */
+    padding: 10px 20px;
+}
+
+header .logo {
+    height: 50px;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+nav a:hover {
+    color: #0056b3;
+}
+
+main {
+    padding: 20px;
+}
+
+/* Home Section */
+.home-section {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.home-section aside {
+    flex: 1 1 300px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+
+.map-container {
+    flex: 2 1 500px;
+    height: 400px;
+    position: relative;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+}
+
+/* Dashboard Section */
+.dashboard-section {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.dashboard-section aside {
+    flex: 1 1 300px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+
+.dashboard-section .map-container {
+    flex: 2 1 500px;
+    height: 500px;
+    position: relative;
+}
+
+/* Downloads Section */
+.downloads-section {
+    text-align: center;
+}
+
+.downloads-section ul {
+    padding: 20px;
+}
+
+.downloads-section ul li {
+    margin-bottom: 10px;
+}
+
+/* Footer (if needed) */
+footer {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    margin-top: 20px;
+}
+/* Legend Styling */
+.info.legend {
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    color: #333;
+    line-height: 18px;
+}
+
+.info.legend h4 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.info.legend i {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    opacity: 0.7;
+    border: 1px solid #333;
+}
+
+
+/* Media Queries */
+@media (max-width: 768px) {
+    header {
+        flex-wrap: wrap;
+        text-align: center;
+    }
+
+    nav {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .home-section, .dashboard-section {
+        flex-direction: column;
+    }
+
+    .map-container, aside {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    .map-container {
+        height: 300px; /* Reduce height for smaller screens */
+    }
+
+    #map {
+        height: 300px; /* Ensure the map adapts */
+    }
+}
+
+@media (max-width: 480px) {
+    nav a {
+        font-size: 14px;
+    }
+
+    header .logo {
+        height: 40px;
+    }
+
+    .map-container {
+        height: 250px;
+        
+    }
+
+    #map {
+        height: 250px;
+    }
+}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block body %}
+<section class="dashboard-section">
+    <aside>
+        <h2>Real-Time Data</h2>
+        <ul>
+            <li>Temperature: {{ data.weather_data.temperature }}°C</li>
+            <li>Humidity: {{ data.weather_data.humidity }}%</li>
+            <li>Rainfall: {{ data.weather_data.rainfall }} mm</li>
+            <li>Wind Speed: {{ data.weather_data.wind_speed }} km/h</li>
+            <li>Soil Moisture: {{ data.soil_moisture.moisture_level }}%</li>
+            <li>Crop Yield: {{ data.crop_yield.yield_prediction }} kg/ha</li>
+        </ul>
+        <h3>Alerts</h3>
+        <ul>
+            {% if data.alerts %}
+                {% for alert in data.alerts %}
+                    <li>{{ alert }}</li>
+                {% endfor %}
+            {% else %}
+                <li>No critical alerts.</li>
+            {% endif %}
+        </ul>
+    </aside>
+    <div class="map-container">
+        <h2>Alert Map</h2>
+        <div id="map"></div>
+    </div>
+</section>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+<script>
+    const map = L.map('map').setView([0.3476, 37.5823], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+    fetch("{{ geojson_url }}").then(response => response.json()).then(data => {
+        L.geoJSON(data, {
+            onEachFeature: function (feature, layer) {
+                if (feature.properties.alert) {
+                    layer.setStyle({ color: "red" });
+                }
+            }
+        }).addTo(map);
+    });
+</script> -->
+
+<script>
+    // Initialize the map
+    const map = L.map('map').setView([0.3476, 37.5823], 7); // Default center and zoom
+
+    // Basemap layers
+    const openStreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    });
+
+    const satellite = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution: "Tiles &copy; Esri &mdash; Source: Esri, USGS, NOAA",
+        }
+      );
+
+      const topo = L.tileLayer(
+        "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+        {
+          attribution:
+            'Map data: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> contributors',
+        }
+      );
+
+    // Add OpenStreetMap as the default basemap
+    satellite.addTo(map);
+
+    // Layer control for switching basemaps
+    const baseMaps = {
+      
+        "Satellite ": satellite,
+        "OpenStreetMap": openStreetMap,
+        "Topo": topo,
+    };
+
+    L.control.layers(baseMaps).addTo(map);
+
+      // Add a custom legend
+      {/* const legend = L.control({ position: 'bottomright' });
+
+      legend.onAdd = function (map) {
+          const div = L.DomUtil.create('div', 'info legend');
+          // Define the legend content (adjust for your data)
+          div.innerHTML = `
+              <h4>Legend</h4>
+              <i style="background: #FF5733"></i> High Soil Moisture <br>
+              <i style="background: #33FF57"></i> Moderate Soil Moisture <br>
+              <i style="background: #337BFF"></i> Low Soil Moisture <br>
+          `;
+          return div;
+      };
+  
+      legend.addTo(map); */}
+
+     // Load GeoJSON data and add to map
+     fetch('/static/F_DETAILS.geojson')
+    .then(response => response.json())
+    .then(data => {
+        const geojsonLayer = L.geoJSON(data).addTo(map);
+        map.fitBounds(geojsonLayer.getBounds()); // Adjust map view to fit the GeoJSON layer
+    })
+    .catch(error => console.error('Error loading GeoJSON:', error));
+
+</script>
+{% endblock %}

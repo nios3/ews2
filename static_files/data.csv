@@ -1,0 +1,4 @@
+temperature,humidity,rainfall,wind_speed,description,location,moisture_level,yield_prediction
+20.52,63.04,28.3,0.25,Cloudy,,,
+,,,,,Farm A,6.19,
+,,,,,Farm A,,136.35
