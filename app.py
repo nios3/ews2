@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_file, request, jsonify, redirect, url_for
+from flask import Flask, render_template, send_file, request, jsonify, redirect, url_for, flash
 from simulated_data import get_simulated_data
 from models import Location, Alert, SensorReading, WeatherData, CropYield, User, Sensor
 from alerts import run_all_checks
@@ -12,9 +12,24 @@ from datetime import datetime, timedelta
 import schedule
 import time
 import threading
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length, EqualTo
+import bcrypt
 
 app = Flask(__name__)
-
+app.secret_key = 'your-secret-key-here'
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'  # Redirect to login page if unauthorized
+@login_manager.user_loader
+def load_user(user_id):
+    """Load user from the database."""
+    session = get_db_session()
+    user = session.query(User).get(int(user_id))
+    session.close()
+    return user
 # Database connection
 def get_db_session():
     """Get database session"""
@@ -45,10 +60,10 @@ def home():
     return render_template("home.html", locations=locations)
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
     """EWS Dashboard with real-time data and alerts."""
     session = get_db_session()
-    
     # Get latest data
     locations = session.query(Location).all()
     
@@ -281,6 +296,71 @@ def questions():
 @app.route('/contact')
 def contact():
     return render_template("contact.html")
+
+
+#new
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length, EqualTo, Email
+
+class SignUpForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=2, max=50)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Sign Up')
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = SignUpForm()
+    if form.validate_on_submit():
+        session = get_db_session()
+        user = User(
+            name=form.name.data,
+            email=form.email.data,
+            password_hash=bcrypt.hashpw(form.password.data.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        )
+        session.add(user)
+        session.commit()
+        session.close()
+        flash('Account created successfully! Please log in.', 'success')
+        return redirect(url_for('login'))
+    return render_template('signup.html', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        session = get_db_session()
+        user = session.query(User).filter_by(email=form.email.data).first()
+        if user and bcrypt.checkpw(form.password.data.encode('utf-8'), user.password_hash.encode('utf-8')):
+            login_user(user)
+            session.close()
+            flash('Logged in successfully!', 'success')
+            return redirect(url_for('dashboard'))
+        else:
+            session.close()
+            flash('Invalid email or password.', 'danger')
+    return render_template('login.html', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Logged out successfully!', 'success')
+    return redirect(url_for('home'))
+
+# @app.route('/dashboard')
+
+# def dashboard():
+#     session = get_db_session()
+#     locations = session.query(Location).all()
+#     session.close()
+#     return render_template("dashboard.html", locations=locations)
 
 @app.route('/more')
 def more():

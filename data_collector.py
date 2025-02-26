@@ -171,9 +171,9 @@ def predict_crop_yields():
             prediction = CropYield(
                 location_id=location.id,
                 crop_type=crop,
-                prediction_date=datetime.now(),
-                predicted_yield=yield_prediction,  # Tons per hectare
-                confidence=random.uniform(0.7, 0.95)  # Confidence score
+                # prediction_date=datetime.now(),
+                # predicted_yield=yield_prediction,  # Tons per hectare
+                # confidence=random.uniform(0.7, 0.95)  # Confidence score
             )
             predictions.append(prediction)
     

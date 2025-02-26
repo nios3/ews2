@@ -2,6 +2,8 @@ from sqlalchemy import Column, Integer, Float, String, DateTime, Boolean, Foreig
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 import datetime
+from flask_login import UserMixin
+import bcrypt
 
 Base = declarative_base()
 
@@ -103,16 +105,22 @@ class Alert(Base):
     def __repr__(self):
         return f"<Alert(location={self.location_id}, type='{self.alert_type}', severity='{self.severity}')>"
 
-class User(Base):
+class User(Base, UserMixin):
     __tablename__ = 'users'
     
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    email = Column(String, unique=True)
+    email = Column(String, unique=True, nullable=False)
     phone = Column(String)
     user_type = Column(String)  # farmer, CFA member, admin
     location_id = Column(Integer, ForeignKey('locations.id'))
     alert_preferences = Column(String)  # Could be JSON string with preferences
-    
-    def __repr__(self):
-        return f"<User(name='{self.name}', type='{self.user_type}')>"
+    password_hash = Column(String(60), nullable=False)  # Add this field for password hashing
+
+    def set_password(self, password):
+        """Hash the password and store it."""
+        self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    def check_password(self, password):
+        """Check if the provided password matches the stored hash."""
+        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
